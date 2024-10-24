@@ -6,35 +6,33 @@ import { HadithService } from 'src/hadith/hadith.service';
 @Injectable()
 export class ScrapingService {
   private readonly baseUrl = 'https://api.sunnahenc.com/api/v1/hadith-by-id/';
-  private readonly delay = 5000;
+  private readonly delay = 1000;
 
   constructor(private readonly hadithService: HadithService) {}
 
   async scrapeHadith(hadithId: number) {
-    try {
-      const response = await axios.get(`${this.baseUrl}${hadithId}?lang=ar`);
-      const hadithData = response.data.data;
+    const response = await axios.get(`${this.baseUrl}${hadithId}?lang=ar`);
+    const hadithData = response.data;
 
-      await this.saveHadith(hadithData);
+    await this.saveHadith(hadithData.data);
 
-      if (hadithData.similar && hadithData.similar.length > 0) {
-        for (const similar of hadithData.similar) {
-          await this.saveHadith(similar);
-        }
+    if (hadithData.similar && hadithData.similar.length > 0) {
+      for (const similar of hadithData.similar) {
+        await this.saveHadith(similar);
       }
-      await this.delayRequest();
+    }
+    await this.delayRequest();
 
-      const nextHadithId = hadithData.next_hadith_id;
-      if (nextHadithId) {
-        await this.scrapeHadith(nextHadithId);
-      }
-    } catch (error) {}
+    const nextHadithId = hadithData.next_hadith_id;
+    if (nextHadithId) {
+      await this.scrapeHadith(nextHadithId);
+    }
   }
 
   private async saveHadith(hadithData: any) {
     const hadith: CreateHadithDto = {
       hadith_no: hadithData.hadith_no,
-      hadith_text: hadithData.hadith_text,
+      hadith_text: hadithData.hadith_text || ' ',
       maqsad_id: hadithData.maqsad_id,
       maqsad_name: hadithData.maqsad_name,
       ketab_name: hadithData.ketab_name,
