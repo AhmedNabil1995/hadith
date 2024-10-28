@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateHadithDto } from './dtos/CreateHadith.dto';
 import { FindCategoriesDto } from './dtos/FindCategories.dto';
+import { FindHadithsDto } from './dtos/FindHadith.dto';
 import { Hadith } from './entities/hadith.entity';
 import { Maqsad } from './entities/maqsad.entity';
-
 @Injectable()
 export class HadithService {
   constructor(
@@ -345,7 +345,7 @@ export class HadithService {
       .find(FindCategoriesDto.getQuery(findCategoriesDto))
       .setOptions({
         lean: true,
-        projection: { category_name: 1, category_id: 1 },
+        projection: { category_name: 1, category_id: 1, hadith_no: 1 },
       });
 
     return categories.filter(
@@ -356,10 +356,10 @@ export class HadithService {
     );
   }
 
-  async findHadiths(findCategoriesDto: FindCategoriesDto) {
-    const hadiths = await this.hadithModel
-      .find(FindCategoriesDto.getQuery(findCategoriesDto))
-      .setOptions({ limit: 1 });
+  async findHadiths(findHadithsDto: FindHadithsDto) {
+    const hadiths = await this.hadithModel.find(
+      FindHadithsDto.getQuery(findHadithsDto),
+    );
     return hadiths;
   }
 }
