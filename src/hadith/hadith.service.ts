@@ -333,7 +333,7 @@ export class HadithService {
   }
 
   async findMaqsads() {
-    return await this.maqsadModel.find({});
+    return await this.maqsadModel.find({}).setOptions({ sort: '_id' });
   }
 
   async findFasls() {
