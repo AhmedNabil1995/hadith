@@ -25,7 +25,7 @@ export class HadithController {
     return { hadiths };
   }
 
-  @Get()
+  @Get('lat-visited-hadith')
   async lasVisitedHadith() {
     return this.hadithService.getLastVisitedHadith();
   }
