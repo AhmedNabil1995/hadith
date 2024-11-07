@@ -5,12 +5,15 @@ import { CreateHadithDto } from './dtos/CreateHadith.dto';
 import { FindCategoriesDto } from './dtos/FindCategories.dto';
 import { FindHadithsDto } from './dtos/FindHadith.dto';
 import { Hadith } from './entities/hadith.entity';
+import { LastVisitedHadith } from './entities/lastVisitedHadith.entity';
 import { Maqsad } from './entities/maqsad.entity';
 @Injectable()
 export class HadithService {
   constructor(
     @InjectModel(Hadith.name) private hadithModel: Model<Hadith>,
     @InjectModel(Maqsad.name) private maqsadModel: Model<Maqsad>,
+    @InjectModel(LastVisitedHadith.name)
+    private lastVisitedHadith: Model<LastVisitedHadith>,
   ) {}
 
   async create(createHadithDto: CreateHadithDto) {
@@ -360,6 +363,15 @@ export class HadithService {
     const hadiths = await this.hadithModel.find(
       FindHadithsDto.getQuery(findHadithsDto),
     );
+    await this.lastVisitedHadith.deleteMany();
+    const lastHadith = new this.lastVisitedHadith({
+      hadith_no: hadiths[0].hadith_no,
+    });
+    await lastHadith.save();
     return hadiths;
+  }
+
+  async getLastVisitedHadith() {
+    return this.lastVisitedHadith.findOne();
   }
 }

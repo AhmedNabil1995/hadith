@@ -24,4 +24,9 @@ export class HadithController {
     const hadiths = await this.hadithService.findHadiths(findHadithsDto);
     return { hadiths };
   }
+
+  @Get()
+  async lasVisitedHadith() {
+    return this.hadithService.getLastVisitedHadith();
+  }
 }
