@@ -45,7 +45,7 @@ export class Hadith extends MongooseEntity {
 
   @Prop([{ type: Footnote }])
   footnotes: Footnote[];
-  @Prop([{ type: Boolean }])
+  @Prop({ type: Boolean })
   addedToFav: boolean;
 
   @Prop([{ type: mongoose.Types.ObjectId, ref: Note.name }])
