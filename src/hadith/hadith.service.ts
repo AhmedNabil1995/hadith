@@ -382,23 +382,12 @@ export class HadithService {
   }
 
   async addHadithToFav(findHadithsDto: FindHadithsDto) {
-    const hadiths = await this.hadithModel.find(
-      FindHadithsDto.getQuery(findHadithsDto),
-    );
-
-    await Promise.all(
-      hadiths.map((hadith) => {
-        hadith.addedToFav = !hadith.addedToFav;
-        hadith.save();
-      }),
-    );
-
     const hadith = await this.FavHadith.findOne({
-      hadith_no: hadiths[0].hadith_no,
+      hadith_no: findHadithsDto.hadith_no,
     });
 
     if (!hadith) {
-      const fav = new this.FavHadith({ hadith_no: hadiths[0].hadith_no });
+      const fav = new this.FavHadith({ hadith_no: findHadithsDto.hadith_no });
       await fav.save();
     } else {
       await hadith.deleteOne();
