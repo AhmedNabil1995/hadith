@@ -34,7 +34,7 @@ export class HadithController {
 
   @Post('add-to-fav')
   async addToFav(@Query() findHadithsDto: FindHadithsDto) {
-    await this.hadithService.addHadithToFav({
+    return this.hadithService.addHadithToFav({
       hadith_no: Number(findHadithsDto),
     });
   }

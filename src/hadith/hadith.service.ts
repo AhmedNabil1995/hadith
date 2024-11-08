@@ -400,6 +400,8 @@ export class HadithService {
     if (!hadith) {
       const fav = new this.FavHadith({ hadith_no: hadiths[0].hadith_no });
       await fav.save();
+    } else {
+      await hadith.deleteOne();
     }
   }
 
