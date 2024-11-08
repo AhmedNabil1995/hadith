@@ -1,10 +1,15 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsMongoId, IsNumber, IsOptional } from 'class-validator';
+import mongoose from 'mongoose';
 import { ToNumber } from 'src/common/constant/decorator/ToNumber';
 
 export class FindHadithsDto {
   static getQuery(query: FindHadithsDto) {
     const mongooseQuery = { $and: [] };
+
+    if (query.id) {
+      mongooseQuery.$and.push({ _id: query.id });
+    }
 
     if (query.ketab_id) {
       mongooseQuery.$and.push({ ketab_id: query.ketab_id });
@@ -20,12 +25,16 @@ export class FindHadithsDto {
       mongooseQuery.$and.push({ hadith_no: query.hadith_no });
     }
 
-    if (query.hadith_nos) {
-      mongooseQuery.$and.push({ hadith_no: { $in: query.hadith_nos } });
+    if (query.ids) {
+      mongooseQuery.$and.push({ hadith_no: { $in: query.ids } });
     }
 
     return mongooseQuery;
   }
+
+  @IsMongoId()
+  @IsOptional()
+  id?: mongoose.Types.ObjectId;
 
   @IsNumber()
   @IsOptional()
@@ -47,6 +56,6 @@ export class FindHadithsDto {
 
   @IsOptional()
   @IsArray()
-  @Type(() => Number)
-  hadith_nos?: number[];
+  @Type(() => mongoose.Types.ObjectId)
+  ids?: mongoose.Types.ObjectId[];
 }

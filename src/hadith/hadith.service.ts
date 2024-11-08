@@ -416,7 +416,7 @@ export class HadithService {
 
     const hadiths = await this.findHadiths(
       {
-        hadith_nos: favs.map((el) => el.hadith_no),
+        ids: favs.map((el) => el.hadith_id),
       },
       {
         projection:
