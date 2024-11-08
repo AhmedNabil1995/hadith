@@ -390,7 +390,7 @@ export class HadithService {
       const fav = new this.FavHadith({ hadith_no: findHadithsDto.hadith_no });
       await fav.save();
     } else {
-      await hadith.deleteOne();
+      await this.FavHadith.deleteMany({ hadith_no: findHadithsDto.hadith_no });
     }
   }
 
