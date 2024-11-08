@@ -393,9 +393,14 @@ export class HadithService {
       }),
     );
 
-    const fav = new this.FavHadith({ hadith_no: hadiths[0].hadith_no });
+    const hadith = await this.FavHadith.findOne({
+      hadith_no: hadiths[0].hadith_no,
+    });
 
-    await fav.save();
+    if (!hadith) {
+      const fav = new this.FavHadith({ hadith_no: hadiths[0].hadith_no });
+      await fav.save();
+    }
   }
 
   async getFav(setPageLimit: SetPageLimit) {
