@@ -7,6 +7,7 @@ import {
   LastVisitedHadithSchema,
 } from './entities/lastVisitedHadith.entity';
 import { Maqsad, MaqsadSchema } from './entities/maqsad.entity';
+import { Note, NoteSchema } from './entities/notes.entity';
 import { HadithController } from './hadith.controller';
 import { HadithService } from './hadith.service';
 
@@ -14,6 +15,7 @@ import { HadithService } from './hadith.service';
   imports: [
     MongooseModule.forFeature([{ name: Hadith.name, schema: HadithSchema }]),
     MongooseModule.forFeature([{ name: Maqsad.name, schema: MaqsadSchema }]),
+    MongooseModule.forFeature([{ name: Note.name, schema: NoteSchema }]),
     MongooseModule.forFeature([
       { name: FavHadith.name, schema: FavHadithSchema },
     ]),
