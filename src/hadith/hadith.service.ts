@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, QueryOptions } from 'mongoose';
 import { AddNoteDto } from './dtos/addNote.dto';
 import { CreateHadithDto } from './dtos/CreateHadith.dto';
 import { FindCategoriesDto } from './dtos/FindCategories.dto';
@@ -365,10 +365,13 @@ export class HadithService {
     );
   }
 
-  async findHadiths(findHadithsDto: FindHadithsDto) {
-    const hadiths = await this.hadithModel.find(
-      FindHadithsDto.getQuery(findHadithsDto),
-    );
+  async findHadiths(
+    findHadithsDto: FindHadithsDto,
+    options: QueryOptions<any> = {},
+  ) {
+    const hadiths = await this.hadithModel
+      .find(FindHadithsDto.getQuery(findHadithsDto))
+      .setOptions(options);
     await this.lastVisitedHadith.deleteMany();
     const lastHadith = new this.lastVisitedHadith({
       hadith_no: hadiths[0].hadith_no,
@@ -406,10 +409,21 @@ export class HadithService {
   }
 
   async getFav(setPageLimit: SetPageLimit) {
-    return this.FavHadith.find().setOptions({
+    const favs = await this.FavHadith.find().setOptions({
       limit: setPageLimit.limit,
       skip: setPageLimit.page * setPageLimit.limit,
     });
+
+    const hadiths = await this.findHadiths(
+      {
+        hadith_nos: favs.map((el) => el.hadith_no),
+      },
+      {
+        projection:
+          'hadith_no hadith_text maqsad_name ketab_name category_name',
+      },
+    );
+    return hadiths;
   }
 
   async addNote(findHadithsDto: FindHadithsDto, addNoteDto: AddNoteDto) {

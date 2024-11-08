@@ -1,4 +1,5 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsNumber, IsOptional } from 'class-validator';
 import { ToNumber } from 'src/common/constant/decorator/ToNumber';
 
 export class FindHadithsDto {
@@ -17,6 +18,10 @@ export class FindHadithsDto {
 
     if (query.hadith_no) {
       mongooseQuery.$and.push({ hadith_no: query.hadith_no });
+    }
+
+    if (query.hadith_nos) {
+      mongooseQuery.$and.push({ hadith_no: { $in: query.hadith_nos } });
     }
 
     return mongooseQuery;
@@ -39,4 +44,9 @@ export class FindHadithsDto {
   @IsNumber()
   @ToNumber()
   hadith_no?: number;
+
+  @IsOptional()
+  @IsArray()
+  @Type(() => Number)
+  hadith_nos?: number[];
 }
