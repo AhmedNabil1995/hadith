@@ -382,9 +382,9 @@ export class HadithService {
   }
 
   async addHadithToFav(findHadithsDto: FindHadithsDto) {
-    const hadiths = await this.hadithModel
-      .find(FindHadithsDto.getQuery(findHadithsDto))
-      .setOptions({ lean: false });
+    const hadiths = await this.hadithModel.find(
+      FindHadithsDto.getQuery(findHadithsDto),
+    );
 
     await Promise.all(
       hadiths.map((hadith) => {
