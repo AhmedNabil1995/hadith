@@ -388,7 +388,7 @@ export class HadithService {
 
     await Promise.all(
       hadiths.map((hadith) => {
-        hadith.addedToFav = true;
+        hadith.addedToFav = !hadith.addedToFav;
         hadith.save();
       }),
     );
