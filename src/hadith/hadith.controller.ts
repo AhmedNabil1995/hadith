@@ -44,7 +44,7 @@ export class HadithController {
 
   @Get('notes')
   async getNotes(@Query() SetPageLimit: SetPageLimit) {
-    return this.hadithService.getFav(SetPageLimit);
+    return this.hadithService.getNotes(SetPageLimit);
   }
 
   @Post('add-note')
