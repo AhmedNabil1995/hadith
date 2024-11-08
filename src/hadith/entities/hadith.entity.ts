@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 import { MongooseEntity } from 'src/common/constant/MongooseEntity';
+import { Note } from './notes.entity';
 
 @Schema()
 export class Footnote {
@@ -43,6 +45,11 @@ export class Hadith extends MongooseEntity {
 
   @Prop([{ type: Footnote }])
   footnotes: Footnote[];
+  @Prop([{ type: Boolean }])
+  addedToFav: boolean;
+
+  @Prop([{ type: mongoose.Types.ObjectId, ref: Note.name }])
+  noteId: mongoose.Types.ObjectId;
 }
 
 export const HadithSchema = SchemaFactory.createForClass(Hadith);

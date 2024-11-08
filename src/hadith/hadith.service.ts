@@ -1,17 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { AddNoteDto } from './dtos/addNote.dto';
 import { CreateHadithDto } from './dtos/CreateHadith.dto';
 import { FindCategoriesDto } from './dtos/FindCategories.dto';
 import { FindHadithsDto } from './dtos/FindHadith.dto';
+import { SetPageLimit } from './dtos/setPageLimit.dto';
+import { FavHadith } from './entities/fav.entity';
 import { Hadith } from './entities/hadith.entity';
 import { LastVisitedHadith } from './entities/lastVisitedHadith.entity';
 import { Maqsad } from './entities/maqsad.entity';
+import { Note } from './entities/notes.entity';
 @Injectable()
 export class HadithService {
   constructor(
     @InjectModel(Hadith.name) private hadithModel: Model<Hadith>,
     @InjectModel(Maqsad.name) private maqsadModel: Model<Maqsad>,
+    @InjectModel(Note.name) private Note: Model<Note>,
+    @InjectModel(FavHadith.name) private FavHadith: Model<FavHadith>,
     @InjectModel(LastVisitedHadith.name)
     private lastVisitedHadith: Model<LastVisitedHadith>,
   ) {}
@@ -373,5 +379,51 @@ export class HadithService {
 
   async getLastVisitedHadith() {
     return this.lastVisitedHadith.findOne();
+  }
+
+  async addHadithToFav(findHadithsDto: FindHadithsDto) {
+    const hadiths = await this.hadithModel
+      .find(FindHadithsDto.getQuery(findHadithsDto))
+      .setOptions({ lean: false });
+
+    await Promise.all(
+      hadiths.map((hadith) => {
+        hadith.addedToFav = true;
+        hadith.save();
+      }),
+    );
+
+    const fav = new this.FavHadith({ hadith_no: hadiths[0].hadith_no });
+
+    await fav.save();
+  }
+
+  async getFav(setPageLimit: SetPageLimit) {
+    return this.FavHadith.find().setOptions({
+      limit: setPageLimit.limit,
+      skip: setPageLimit.page * setPageLimit.limit,
+    });
+  }
+
+  async addNote(findHadithsDto: FindHadithsDto, addNoteDto: AddNoteDto) {
+    const note = new this.Note(addNoteDto);
+    note.save();
+    const hadiths = await this.hadithModel
+      .find(FindHadithsDto.getQuery(findHadithsDto))
+      .setOptions({ lean: false });
+
+    await Promise.all(
+      hadiths.map((hadith) => {
+        hadith.noteId = note._id;
+        hadith.save();
+      }),
+    );
+  }
+
+  async getNotes(setPageLimit: SetPageLimit) {
+    return this.Note.find().setOptions({
+      limit: setPageLimit.limit,
+      skip: setPageLimit.page * setPageLimit.limit,
+    });
   }
 }
