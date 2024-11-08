@@ -397,11 +397,11 @@ export class HadithService {
     );
 
     const hadith = await this.FavHadith.findOne({
-      hadith_no: hadiths[0].hadith_no,
+      hadith_id: hadiths[0]._id,
     });
 
     if (!hadith) {
-      const fav = new this.FavHadith({ hadith_no: hadiths[0].hadith_no });
+      const fav = new this.FavHadith({ hadith_id: hadiths[0]._id });
       await fav.save();
     } else {
       await hadith.deleteOne();
