@@ -442,4 +442,8 @@ export class HadithService {
       skip: setPageLimit.page * setPageLimit.limit,
     });
   }
+
+  async search(findHadithsDto: FindHadithsDto) {
+    return await this.hadithModel.find(FindHadithsDto.getQuery(findHadithsDto));
+  }
 }

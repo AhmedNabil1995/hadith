@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsMongoId, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsArray,
+  IsMongoId,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import mongoose from 'mongoose';
 import { ToNumber } from 'src/common/constant/decorator/ToNumber';
 
@@ -27,6 +33,19 @@ export class FindHadithsDto {
 
     if (query.ids) {
       mongooseQuery.$and.push({ _id: { $in: query.ids } });
+    }
+
+    if (query.searchKeyword) {
+      mongooseQuery.$and.push({
+        $or: [
+          { hadith_no: Number(query.searchKeyword) },
+          { maqsad_name: query.searchKeyword },
+          { ketab_name: query.searchKeyword },
+          { fasl_name: query.searchKeyword },
+          { category_name: query.searchKeyword },
+          { hadith_text: { $regex: query.searchKeyword } },
+        ],
+      });
     }
 
     return mongooseQuery;
@@ -58,4 +77,8 @@ export class FindHadithsDto {
   @IsArray()
   @Type(() => mongoose.Types.ObjectId)
   ids?: mongoose.Types.ObjectId[];
+
+  @IsString()
+  @IsOptional()
+  searchKeyword?: string;
 }
