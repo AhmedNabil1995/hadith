@@ -25,18 +25,18 @@ export class FindHadithsDto {
   @IsNumber()
   @IsOptional()
   @ToNumber()
-  ketab_id: number;
+  ketab_id?: number;
   @IsNumber()
   @IsOptional()
   @ToNumber()
-  category_id: number;
+  category_id?: number;
   @IsNumber()
   @IsOptional()
   @ToNumber()
-  fasl_id: number;
+  fasl_id?: number;
 
   @IsOptional()
   @IsNumber()
   @ToNumber()
-  hadith_no: number;
+  hadith_no?: number;
 }
