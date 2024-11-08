@@ -26,7 +26,7 @@ export class FindHadithsDto {
     }
 
     if (query.ids) {
-      mongooseQuery.$and.push({ hadith_no: { $in: query.ids } });
+      mongooseQuery.$and.push({ _id: { $in: query.ids } });
     }
 
     return mongooseQuery;

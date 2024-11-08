@@ -372,11 +372,6 @@ export class HadithService {
     const hadiths = await this.hadithModel
       .find(FindHadithsDto.getQuery(findHadithsDto))
       .setOptions(options);
-    await this.lastVisitedHadith.deleteMany();
-    const lastHadith = new this.lastVisitedHadith({
-      hadith_no: hadiths[0].hadith_no,
-    });
-    await lastHadith.save();
     return hadiths;
   }
 
