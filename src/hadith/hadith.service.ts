@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { AddNoteDto } from './dtos/addNote.dto';
 import { CreateHadithDto } from './dtos/CreateHadith.dto';
 import { FindNoteDto } from './dtos/DeleteNote.dto';
@@ -436,16 +436,17 @@ export class HadithService {
   }
 
   async deleteNote(findNoteDto: FindNoteDto) {
-    await this.Note.deleteOne(FindNoteDto.getQuery(findNoteDto));
-
-    const hadith = await this.hadithModel.findOne({
-      noteId: findNoteDto.id,
-    });
+    const hadith = await this.hadithModel
+      .findOne({
+        noteId: new mongoose.Types.ObjectId(findNoteDto.id),
+      })
+      .setOptions({ lean: false });
     if (hadith) {
       hadith.noteId = hadith.noteId.filter(
         (note) => note.toString() != findNoteDto.id.toString(),
       );
       await hadith.save();
+      await this.Note.deleteOne(FindNoteDto.getQuery(findNoteDto));
     }
   }
 
