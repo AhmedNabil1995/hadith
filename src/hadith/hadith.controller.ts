@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AddNoteDto } from './dtos/addNote.dto';
+import { FindCategoriesDto } from './dtos/FindCategories.dto';
 import { FindHadithsDto } from './dtos/FindHadith.dto';
 import { SetPageLimit } from './dtos/setPageLimit.dto';
 import { HadithService } from './hadith.service';
@@ -13,11 +14,10 @@ export class HadithController {
     return { maqsads };
   }
 
-  @Get('categories/:ketabId')
-  async findCategories(@Param('ketabId') ketabId: string) {
-    const categories = await this.hadithService.findCategories({
-      ketab_id: Number(ketabId),
-    });
+  @Get('categories')
+  async findCategories(@Query() findCategoriesDto: FindCategoriesDto) {
+    const categories =
+      await this.hadithService.findCategories(findCategoriesDto);
     return { categories };
   }
 
