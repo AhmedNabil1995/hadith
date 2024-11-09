@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AddNoteDto } from './dtos/addNote.dto';
 import { CreateHadithDto } from './dtos/CreateHadith.dto';
+import { FindNoteDto } from './dtos/DeleteNote.dto';
 import { FindCategoriesDto } from './dtos/FindCategories.dto';
 import { FindHadithsDto } from './dtos/FindHadith.dto';
 import { SetPageLimit } from './dtos/setPageLimit.dto';
@@ -422,9 +423,29 @@ export class HadithService {
 
     await Promise.all(
       hadiths.map((hadith) => {
-        hadith.noteId = note._id;
+        if (hadith.noteId) {
+          hadith.noteId[0]
+            ? hadith.noteId.push(note._id)
+            : (hadith.noteId[0] = note._id);
+        } else {
+          hadith.noteId = [note._id];
+        }
         hadith.save();
       }),
+    );
+  }
+
+  async deleteNote(findNoteDto: FindNoteDto) {
+    await this.Note.deleteOne(FindNoteDto.getQuery(findNoteDto));
+
+    const hadith = await this.hadithModel.findOne({ noteId: findNoteDto.id });
+    hadith.noteId = null;
+  }
+
+  async editNote(findNoteDto: FindNoteDto, addNoteDto: AddNoteDto) {
+    await this.Note.findOneAndUpdate(
+      FindNoteDto.getQuery(findNoteDto),
+      addNoteDto,
     );
   }
 

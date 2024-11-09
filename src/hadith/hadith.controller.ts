@@ -1,5 +1,15 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { AddNoteDto } from './dtos/addNote.dto';
+import { FindNoteDto } from './dtos/DeleteNote.dto';
 import { FindCategoriesDto } from './dtos/FindCategories.dto';
 import { FindHadithsDto } from './dtos/FindHadith.dto';
 import { SetPageLimit } from './dtos/setPageLimit.dto';
@@ -53,5 +63,18 @@ export class HadithController {
     @Body() addNoteDto: AddNoteDto,
   ) {
     await this.hadithService.addNote(findHadithsDto, addNoteDto);
+  }
+
+  @Put('edit-note/:id')
+  async editNote(
+    @Param() findNoteDto: FindNoteDto,
+    @Body() addNoteDto: AddNoteDto,
+  ) {
+    await this.hadithService.editNote(findNoteDto, addNoteDto);
+  }
+
+  @Delete('note/:id')
+  async deleteNote(@Param() findNoteDto: FindNoteDto) {
+    await this.hadithService.deleteNote(findNoteDto);
   }
 }

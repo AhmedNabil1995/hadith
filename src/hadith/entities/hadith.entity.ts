@@ -49,7 +49,7 @@ export class Hadith extends MongooseEntity {
   addedToFav: boolean;
 
   @Prop([{ type: mongoose.Types.ObjectId, ref: Note.name }])
-  noteId: mongoose.Types.ObjectId;
+  noteId: mongoose.Types.ObjectId[];
 }
 
 export const HadithSchema = SchemaFactory.createForClass(Hadith);
