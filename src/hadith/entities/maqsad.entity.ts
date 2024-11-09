@@ -1,6 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
+export class fasl {
+  _id: number;
+  name: string;
+}
+export const faslSchema = SchemaFactory.createForClass(fasl);
+
+@Schema()
 export class Ketab {
   @Prop({ type: Number, required: true })
   _id: number;
@@ -10,6 +17,9 @@ export class Ketab {
 
   @Prop({ type: String, required: true })
   title: string;
+
+  @Prop({ type: [fasl] })
+  fasls: fasl[];
 }
 
 export const KetabSchema = SchemaFactory.createForClass(Ketab);

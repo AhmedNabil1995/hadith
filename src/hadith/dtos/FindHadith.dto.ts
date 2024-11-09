@@ -39,11 +39,11 @@ export class FindHadithsDto {
       mongooseQuery.$and.push({
         $or: [
           { hadith_no: Number(query.searchKeyword) },
-          { maqsad_name: query.searchKeyword },
-          { ketab_name: query.searchKeyword },
-          { fasl_name: query.searchKeyword },
-          { category_name: query.searchKeyword },
-          { hadith_text: { $regex: query.searchKeyword } },
+          {
+            hadith_text_hadith_text_without_tashkeel: {
+              $regex: query.searchKeyword,
+            },
+          },
         ],
       });
     }

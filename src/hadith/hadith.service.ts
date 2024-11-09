@@ -446,4 +446,51 @@ export class HadithService {
   async search(findHadithsDto: FindHadithsDto) {
     return await this.hadithModel.find(FindHadithsDto.getQuery(findHadithsDto));
   }
+
+  async addFasls() {
+    const agg = await this.hadithModel.aggregate([
+      {
+        $sort: { fasl_id: 1 }, // Sort by `fasl_id` in ascending order
+      },
+      {
+        $group: {
+          _id: '$ketab_title',
+          fasls: { $addToSet: { _id: '$fasl_id', name: '$fasl_name' } },
+        },
+      },
+    ]);
+
+    const maqsads = await this.maqsadModel.find();
+
+    const kotbs = maqsads.flatMap((maqsads) => maqsads.ketab);
+    kotbs.map((Ketab) => {
+      const index = agg.findIndex((agg) => agg._id === Ketab.title);
+
+      if (index != -1) {
+        Ketab['fasls'] = agg[index].fasls.sort((a, b) => a._id - b._id);
+      }
+    });
+
+    await Promise.all(maqsads.map((maqsad) => maqsad.save()));
+  }
+
+  async add_hadith_text_without_tashkeel() {
+    await this.hadithModel.updateMany({}, [
+      {
+        $set: {
+          hadith_text_without_tashkeel: {
+            $function: {
+              body: function (text) {
+                const tashkeelRegex =
+                  /[\u064B-\u0652\u0617-\u061A\u0640\u0651\u0650\u064F\u064E\u064D\u0652\u061B]/g;
+                return text.replace(tashkeelRegex, '');
+              },
+              args: ['$hadith_text'],
+              lang: 'js',
+            },
+          },
+        },
+      },
+    ]);
+  }
 }
