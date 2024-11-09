@@ -445,6 +445,7 @@ export class HadithService {
       hadith.noteId = hadith.noteId.filter(
         (note) => note.toString() != findNoteDto.id.toString(),
       );
+      await hadith.save();
     }
   }
 
