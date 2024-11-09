@@ -38,14 +38,9 @@ export class FindHadithsDto extends SetPageLimit {
 
     if (query.searchKeyword) {
       mongooseQuery.$and.push({
-        $or: [
-          { hadith_no: Number(query.searchKeyword) },
-          {
-            hadith_text_hadith_text_without_tashkeel: {
-              $regex: query.searchKeyword,
-            },
-          },
-        ],
+        hadith_text_hadith_text_without_tashkeel: {
+          $regex: query.searchKeyword,
+        },
       });
     }
 
