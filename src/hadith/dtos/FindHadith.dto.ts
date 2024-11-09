@@ -38,7 +38,7 @@ export class FindHadithsDto extends SetPageLimit {
 
     if (query.searchKeyword) {
       mongooseQuery.$and.push({
-        hadith_text_hadith_text_without_tashkeel: {
+        hadith_text_without_tashkeel: {
           $regex: decodeURIComponent(query.searchKeyword),
         },
       });
