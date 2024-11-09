@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryOptions } from 'mongoose';
+import { Model } from 'mongoose';
 import { AddNoteDto } from './dtos/addNote.dto';
 import { CreateHadithDto } from './dtos/CreateHadith.dto';
 import { FindCategoriesDto } from './dtos/FindCategories.dto';
@@ -365,13 +365,10 @@ export class HadithService {
     );
   }
 
-  async findHadiths(
-    findHadithsDto: FindHadithsDto,
-    options: QueryOptions<any> = {},
-  ) {
+  async findHadiths(findHadithsDto: FindHadithsDto) {
     const hadiths = await this.hadithModel
       .find(FindHadithsDto.getQuery(findHadithsDto))
-      .setOptions(options);
+      .setOptions(FindHadithsDto.geOptions(findHadithsDto));
     return hadiths;
   }
 
@@ -409,15 +406,10 @@ export class HadithService {
       skip: setPageLimit.page * setPageLimit.limit,
     });
 
-    const hadiths = await this.findHadiths(
-      {
-        ids: favs.map((el) => el.hadith_id),
-      },
-      {
-        projection:
-          'hadith_no hadith_text maqsad_name ketab_name category_name',
-      },
-    );
+    const hadiths = await this.findHadiths({
+      ids: favs.map((el) => el.hadith_id),
+      select: 'hadith_no hadith_text maqsad_name ketab_name category_name',
+    });
     return hadiths;
   }
 

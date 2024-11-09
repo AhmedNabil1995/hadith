@@ -8,8 +8,9 @@ import {
 } from 'class-validator';
 import mongoose from 'mongoose';
 import { ToNumber } from 'src/common/constant/decorator/ToNumber';
+import { SetPageLimit } from './setPageLimit.dto';
 
-export class FindHadithsDto {
+export class FindHadithsDto extends SetPageLimit {
   static getQuery(query: FindHadithsDto) {
     const mongooseQuery = { $and: [] };
 
