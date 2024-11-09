@@ -439,7 +439,7 @@ export class HadithService {
     await this.Note.deleteOne(FindNoteDto.getQuery(findNoteDto));
 
     const hadith = await this.hadithModel.findOne({
-      noteId: { $in: [findNoteDto.id] },
+      noteId: findNoteDto.id,
     });
     if (hadith) {
       hadith.noteId = hadith.noteId.filter(
