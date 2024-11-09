@@ -438,10 +438,14 @@ export class HadithService {
   async deleteNote(findNoteDto: FindNoteDto) {
     await this.Note.deleteOne(FindNoteDto.getQuery(findNoteDto));
 
-    const hadith = await this.hadithModel.findOne({ noteId: findNoteDto.id });
-    hadith.noteId = hadith.noteId.filter(
-      (note) => note.toString() != findNoteDto.id.toString(),
-    );
+    const hadith = await this.hadithModel.findOne({
+      noteId: { $in: [findNoteDto.id] },
+    });
+    if (hadith) {
+      hadith.noteId = hadith.noteId.filter(
+        (note) => note.toString() != findNoteDto.id.toString(),
+      );
+    }
   }
 
   async editNote(findNoteDto: FindNoteDto, addNoteDto: AddNoteDto) {
